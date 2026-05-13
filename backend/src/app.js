@@ -29,7 +29,8 @@ app.get('/', (req, res) => {
   });
 });
 
-// Route'lar buraya gelecek
+// Route'lar
+app.use('/api/books', require('./routes/books.routes'));
 
 // 404 yakalayıcı
 app.use((req, res) => {

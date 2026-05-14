@@ -32,6 +32,7 @@ app.get('/', (req, res) => {
 // Route'lar
 app.use('/api/books', require('./routes/books.routes'));
 app.use('/api/books/:bookId/chapters', require('./routes/chapters.routes'));
+app.use('/api/reading-log', require('./routes/readingLog.routes'));
 
 // 404 yakalayıcı
 app.use((req, res) => {

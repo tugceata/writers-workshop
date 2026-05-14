@@ -50,10 +50,14 @@ function bookCard(book) {
         <span class="badge badge-status-${book.status}">
           ${statusLabels[book.status] || book.status}
         </span>
-        ${book.genre ? ` · ${escapeHtml(book.genre)}` : ''}
       </div>
+      ${book.tags && book.tags.length > 0 ? `
+        <div class="tag-list">
+          ${book.tags.map(t => `<span class="badge">${escapeHtml(t.name)}</span>`).join('')}
+        </div>
+      ` : ''}
       ${book.description ? `
-        <div class="card-description">${escapeHtml(book.description)}</div>
+        <div class="card-description" style="margin-top: 12px;">${escapeHtml(book.description)}</div>
       ` : ''}
       <div class="card-actions">
         <a href="#/books/${book.id}" class="btn btn-secondary btn-sm">Aç</a>

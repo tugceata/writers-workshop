@@ -1,7 +1,11 @@
-import { booksApi } from '../api.js';
+import { booksApi, tagsApi } from '../api.js';
 import { navigate } from '../router.js';
+import { TagInput } from '../components/tagInput.js';
 
-export function renderBookForm({ app }) {
+export async function renderBookForm({ app }) {
+  // Tüm tag'leri önceden çek
+  const allTags = await tagsApi.list();
+
   app.innerHTML = `
     <div class="page-header">
       <h1>Yeni Kitap</h1>
@@ -24,15 +28,8 @@ export function renderBookForm({ app }) {
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="genre">Tür</label>
-        <input
-          type="text"
-          id="genre"
-          name="genre"
-          class="form-input"
-          placeholder="örn. fantasy, roman, distopya"
-          maxlength="50"
-        />
+        <label class="form-label">Tür (en fazla 3 etiket)</label>
+        <div id="tag-input-container"></div>
       </div>
 
       <div class="form-group">
@@ -72,19 +69,33 @@ export function renderBookForm({ app }) {
     </form>
   `;
 
+  // Tag input
+  let selectedTagIds = [];
+  const tagInput = new TagInput({
+    allTags,
+    selectedIds: [],
+    maxCount: 3,
+    onChange: (ids) => { selectedTagIds = ids; },
+  });
+  document.getElementById('tag-input-container').appendChild(tagInput.element);
+
+  // Form submit
   const form = document.getElementById('book-form');
   const alertBox = document.getElementById('form-alert');
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
-    // Boş alanları temizle
     Object.keys(data).forEach(k => {
       if (data[k] === '') data[k] = null;
     });
+
+    // Tag'leri ekle
+    data.tag_ids = tagInput.getSelectedIds();
+    // genre alanını çıkar (artık tag kullanıyoruz)
+    delete data.genre;
 
     try {
       const newBook = await booksApi.create(data);

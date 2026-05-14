@@ -64,3 +64,9 @@ export const readingLogApi = {
   remove: (id)     => request(`/reading-log/${id}`, { method: 'DELETE' }),
   stats:  ()       => request('/reading-log/stats'),
 };
+// ═══════════════════════════════════════════════
+// TAGS
+// ═══════════════════════════════════════════════
+export const tagsApi = {
+  list: () => request('/tags'),
+};

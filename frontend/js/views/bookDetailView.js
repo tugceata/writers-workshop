@@ -19,8 +19,12 @@ export async function renderBookDetail({ params, app }) {
         <span class="badge badge-status-${book.status}">
           ${statusLabels[book.status] || book.status}
         </span>
-        ${book.genre ? ` · ${escapeHtml(book.genre)}` : ''}
       </div>
+      ${book.tags && book.tags.length > 0 ? `
+        <div class="tag-list">
+          ${book.tags.map(t => `<span class="badge">${escapeHtml(t.name)}</span>`).join('')}
+        </div>
+      ` : ''}
       ${book.description ? `<p style="margin-top: 12px;">${escapeHtml(book.description)}</p>` : ''}
       ${book.goals ? `
         <p style="margin-top: 12px; color: var(--gray-700);">

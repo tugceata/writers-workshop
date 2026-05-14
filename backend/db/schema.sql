@@ -163,3 +163,10 @@ JOIN mentions m2
     AND m1.source_type = m2.source_type
     AND m1.concept_id < m2.concept_id
 GROUP BY concept_a_id, concept_b_id;
+
+-- Kitap-etiket bağlantısı (çok-çok)
+CREATE TABLE book_tags (
+    book_id INTEGER REFERENCES books(id) ON DELETE CASCADE,
+    tag_id  INTEGER REFERENCES tags(id) ON DELETE CASCADE,
+    PRIMARY KEY (book_id, tag_id)
+);

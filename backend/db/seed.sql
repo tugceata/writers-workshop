@@ -38,3 +38,31 @@ INSERT INTO tags (name) VALUES ('giriş'), ('atmosferik'), ('zaman');
 
 -- Bölüm-etiket bağı
 INSERT INTO chapter_tags VALUES (1, 1), (1, 2);
+
+-- ───────────────────────────────────────────────
+-- KİTAP TÜRÜ ETİKETLERİ (sabit liste)
+-- ───────────────────────────────────────────────
+INSERT INTO tags (name) VALUES
+    ('fantastik'),
+    ('bilim-kurgu'),
+    ('genç-kurgu'),
+    ('distopya'),
+    ('ütopya'),
+    ('roman'),
+    ('öykü'),
+    ('novella'),
+    ('polisiye'),
+    ('gerilim'),
+    ('korku'),
+    ('romantik'),
+    ('tarihsel'),
+    ('biyografi'),
+    ('anı'),
+    ('deneme'),
+    ('şiir'),
+    ('çocuk'),
+    ('mitoloji'),
+    ('gizem'),
+    ('macera'),
+    ('büyülü-gerçekçilik')
+ON CONFLICT (name) DO NOTHING;

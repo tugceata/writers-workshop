@@ -7,11 +7,15 @@ const bookSchema = Joi.object({
       'string.max': 'Başlık en fazla 200 karakter olabilir',
       'any.required': 'Başlık zorunludur',
     }),
-  genre: Joi.string().trim().max(50).allow('', null),
-  description: Joi.string().trim().allow('', null),
+  description: Joi.string().trim().max(500).allow('', null)
+    .messages({
+      'string.max': 'Açıklama en fazla 500 karakter olabilir',
+    }),
   goals: Joi.string().trim().allow('', null),
-  status: Joi.string().valid('draft', 'active', 'completed', 'paused')
-    .default('draft'),
+  status: Joi.string().valid('draft', 'completed').default('draft')
+    .messages({
+      'any.only': 'Durum sadece taslak veya tamamlandı olabilir',
+    }),
 });
 
 module.exports = { bookSchema };

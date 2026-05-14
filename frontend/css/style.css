@@ -304,10 +304,23 @@ main {
   color: var(--pink-700);
 }
 
-.badge-status-draft     { background: var(--gray-200); color: var(--gray-700); }
-.badge-status-active    { background: var(--pink-200); color: var(--pink-700); }
-.badge-status-completed { background: #c8e6c9; color: #2e7d32; }
-.badge-status-paused    { background: #fff3cd; color: #856404; }
+/* Durum rozetleri — pembe tonları, tag'lerden farklı tonlarda */
+.badge-status-draft {
+  background: var(--pink-50);
+  color: var(--pink-400);
+  border: 1px solid var(--pink-100);
+}
+
+.badge-status-completed {
+  background: var(--pink-600);
+  color: white;
+}
+.badge-status-active,
+.badge-status-paused {
+  /* Eski statüsler için fallback, mevcut verileri kırmasın */
+  background: var(--gray-200);
+  color: var(--gray-700);
+}
 
 /* ═══════════════════════════════════════════════
    YARDIMCI
@@ -477,4 +490,51 @@ main {
 .tag-list .badge {
   background: var(--pink-100);
   color: var(--pink-700);
+}
+
+/* Düzenle butonu (kalem ikonu) */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: white;
+  color: var(--pink-600);
+  border: 1px solid var(--pink-200);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  background: var(--pink-100);
+  border-color: var(--pink-400);
+  color: var(--pink-700);
+}
+
+/* Karakter sayacı */
+.form-counter {
+  font-size: 11px;
+  color: var(--gray-500);
+  text-align: right;
+  margin-top: 4px;
+}
+
+.form-counter.over-limit {
+  color: #c0392b;
+}
+
+/* Form üst kısmı — başlık + sayaç */
+.form-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.form-label-row .form-label {
+  margin-bottom: 0;
 }

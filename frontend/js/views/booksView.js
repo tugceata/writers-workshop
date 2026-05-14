@@ -1,5 +1,4 @@
 import { booksApi } from '../api.js';
-import { navigate } from '../router.js';
 
 export async function renderBooksList({ app }) {
   const books = await booksApi.list();
@@ -22,7 +21,6 @@ export async function renderBooksList({ app }) {
     `}
   `;
 
-  // Sil butonları için event listener
   app.querySelectorAll('[data-delete-book]').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
@@ -38,14 +36,17 @@ export async function renderBooksList({ app }) {
 function bookCard(book) {
   const statusLabels = {
     draft:     'Taslak',
-    active:    'Aktif',
     completed: 'Tamamlandı',
+    active:    'Aktif',
     paused:    'Beklemede',
   };
 
   return `
     <div class="card">
-      <div class="card-title">${escapeHtml(book.title)}</div>
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+        <div class="card-title" style="flex: 1;">${escapeHtml(book.title)}</div>
+        <a href="#/books/${book.id}/edit" class="btn-icon" title="Düzenle">✎</a>
+      </div>
       <div class="card-meta">
         <span class="badge badge-status-${book.status}">
           ${statusLabels[book.status] || book.status}

@@ -16,29 +16,28 @@ async function findById(id) {
 }
 
 async function create(book) {
-  const { title, genre, description, goals, status } = book;
+  const { title, description, goals, status } = book;
   const result = await pool.query(
-    `INSERT INTO books (title, genre, description, goals, status)
-     VALUES ($1, $2, $3, $4, $5)
+    `INSERT INTO books (title, description, goals, status)
+     VALUES ($1, $2, $3, $4)
      RETURNING *`,
-    [title, genre, description, goals, status]
+    [title, description, goals, status]
   );
   return result.rows[0];
 }
 
 async function update(id, book) {
-  const { title, genre, description, goals, status } = book;
+  const { title, description, goals, status } = book;
   const result = await pool.query(
     `UPDATE books
      SET title = $1,
-         genre = $2,
-         description = $3,
-         goals = $4,
-         status = $5,
+         description = $2,
+         goals = $3,
+         status = $4,
          updated_at = NOW()
-     WHERE id = $6
+     WHERE id = $5
      RETURNING *`,
-    [title, genre, description, goals, status, id]
+    [title, description, goals, status, id]
   );
   return result.rows[0] || null;
 }

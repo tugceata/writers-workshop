@@ -1,6 +1,7 @@
 import { booksApi, tagsApi } from '../api.js';
 import { navigate } from '../router.js';
 import { TagInput } from '../components/tagInput.js';
+import { toast } from '../components/toast.js';
 
 export async function renderBookForm({ app, params }) {
   const isEdit = !!params?.id;
@@ -110,8 +111,10 @@ export async function renderBookForm({ app, params }) {
       let saved;
       if (isEdit) {
         saved = await booksApi.update(params.id, data);
+        toast.success('Kitap güncellendi');
       } else {
         saved = await booksApi.create(data);
+        toast.success('Kitap kaydedildi');
       }
       navigate(`/books/${saved.id}`);
     } catch (err) {

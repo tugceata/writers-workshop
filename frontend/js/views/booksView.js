@@ -1,4 +1,5 @@
 import { booksApi } from '../api.js';
+import { toast } from '../components/toast.js';
 
 export async function renderBooksList({ app }) {
   const books = await booksApi.list();
@@ -27,6 +28,7 @@ export async function renderBooksList({ app }) {
       const id = btn.dataset.deleteBook;
       if (confirm('Bu kitabı silmek istediğine emin misin?')) {
         await booksApi.remove(id);
+        toast.success('Kitap silindi');
         renderBooksList({ app });
       }
     });

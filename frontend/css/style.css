@@ -538,3 +538,271 @@ main {
 .form-label-row .form-label {
   margin-bottom: 0;
 }
+
+/* ═══════════════════════════════════════════════
+   BÖLÜM LİSTESİ
+   ═══════════════════════════════════════════════ */
+.chapters-section {
+  margin-top: 32px;
+}
+
+.chapters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.chapters-list {
+  list-style: none;
+  padding: 0;
+}
+
+.chapter-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 1px solid var(--pink-100);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.chapter-item:hover {
+  border-color: var(--pink-300);
+  box-shadow: var(--shadow);
+  transform: translateX(2px);
+}
+
+.chapter-drag-handle {
+  cursor: grab;
+  color: var(--gray-500);
+  font-size: 18px;
+  padding: 4px;
+  user-select: none;
+}
+
+.chapter-drag-handle:active {
+  cursor: grabbing;
+}
+
+.chapter-number {
+  color: var(--pink-500);
+  font-weight: 700;
+  font-size: 14px;
+  min-width: 32px;
+}
+
+.chapter-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.chapter-title {
+  font-weight: 600;
+  color: var(--gray-900);
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chapter-meta {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-top: 2px;
+}
+
+.chapter-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* Sortable sürüklenirken */
+.sortable-ghost {
+  opacity: 0.4;
+  background: var(--pink-50);
+}
+
+.sortable-chosen {
+  box-shadow: var(--shadow-lg);
+}
+
+/* ═══════════════════════════════════════════════
+   QUILL EDİTÖR
+   ═══════════════════════════════════════════════ */
+.editor-page {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 0;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.editor-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--pink-100);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.editor-title-input {
+  flex: 1;
+  min-width: 200px;
+  border: none;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gray-900);
+  outline: none;
+  background: transparent;
+  padding: 4px 0;
+  font-family: inherit;
+}
+
+.editor-title-input:focus {
+  border-bottom: 2px solid var(--pink-400);
+}
+
+.editor-meta {
+  font-size: 13px;
+  color: var(--gray-500);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.editor-meta .saved {
+  color: var(--pink-600);
+}
+
+.editor-meta .saving {
+  color: var(--gray-500);
+}
+
+/* Quill toolbar pembe temaya uydur */
+.ql-toolbar.ql-snow {
+  border: none !important;
+  border-bottom: 1px solid var(--pink-100) !important;
+  padding: 10px 24px;
+  background: var(--pink-50);
+}
+
+.ql-container.ql-snow {
+  border: none !important;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 16px;
+  min-height: 500px;
+}
+
+.ql-editor {
+  padding: 28px 32px;
+  line-height: 1.7;
+  color: var(--gray-900);
+  min-height: 500px;
+}
+
+.ql-editor.ql-blank::before {
+  color: var(--gray-500);
+  font-style: italic;
+}
+
+.editor-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--pink-100);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--pink-50);
+}
+
+.editor-stats {
+  font-size: 13px;
+  color: var(--gray-700);
+  display: flex;
+  gap: 16px;
+}
+
+.editor-stats strong {
+  color: var(--pink-600);
+}
+/* ═══════════════════════════════════════════════
+   TOAST BİLDİRİM
+   ═══════════════════════════════════════════════ */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  background: white;
+  border: 1px solid var(--pink-200);
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  box-shadow: var(--shadow-lg);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-900);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 220px;
+  max-width: 360px;
+  animation: toast-in 0.3s ease-out;
+  pointer-events: auto;
+}
+
+.toast.toast-success {
+  border-left: 4px solid var(--pink-500);
+}
+
+.toast.toast-error {
+  border-left: 4px solid #c0392b;
+  color: #c0392b;
+}
+
+.toast-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.toast.toast-success .toast-icon {
+  color: var(--pink-500);
+}
+
+.toast.fade-out {
+  animation: toast-out 0.3s ease-in forwards;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+}

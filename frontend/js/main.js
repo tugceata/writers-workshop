@@ -3,13 +3,15 @@ import { renderHome } from './views/homeView.js';
 import { renderBooksList } from './views/booksView.js';
 import { renderBookForm } from './views/bookFormView.js';
 import { renderBookDetail } from './views/bookDetailView.js';
+import { renderChapterEditor } from './views/chapterEditorView.js';
 
-// Route'ları kaydet
-registerRoute('/',                renderHome);
-registerRoute('/books',           renderBooksList);
-registerRoute('/books/new',       renderBookForm);
-registerRoute('/books/:id/edit',  renderBookForm);  // YENİ
-registerRoute('/books/:id',       renderBookDetail);
+// Route'ları kaydet (sıra önemli — özel olanlar genelden önce)
+registerRoute('/',                                  renderHome);
+registerRoute('/books',                             renderBooksList);
+registerRoute('/books/new',                         renderBookForm);
+registerRoute('/books/:id/edit',                    renderBookForm);
+registerRoute('/books/:bookId/chapters/:chapterId', renderChapterEditor);
+registerRoute('/books/:id',                         renderBookDetail);
 
 const app = document.getElementById('app');
 initRouter(app);

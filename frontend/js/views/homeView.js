@@ -6,30 +6,36 @@ export async function renderHome({ app }) {
     readingLogApi.stats(),
   ]);
 
+  const draftCount = books.filter(b => b.status === 'draft').length;
+  const completedCount = books.filter(b => b.status === 'completed').length;
+
   app.innerHTML = `
     <div class="page-header">
-      <h1>Merhaba 🌸</h1>
+      <h1>Slm cnm 🌸</h1>
     </div>
 
     <div class="grid">
       <div class="card">
-        <div class="card-title">Aktif Kitaplar</div>
+        <div class="card-title">Kitaplarım</div>
         <div style="font-size: 36px; font-weight: 700; color: var(--pink-600);">
-          ${books.filter(b => b.status === 'active').length}
+          ${books.length}
         </div>
-        <div class="card-meta">Toplam ${books.length} kitap projesi</div>
+        <div class="card-meta" style="margin-top: 8px;">
+          <div>Taslak Kitaplar: <strong>${draftCount}</strong></div>
+          <div>Tamamlanmış Kitaplar: <strong>${completedCount}</strong></div>
+        </div>
         <div class="card-actions">
           <a href="#/books" class="btn btn-primary btn-sm">Kitaplarım</a>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-title">Okuduğum Kitaplar</div>
+        <div class="card-title">Kütüphanem</div>
         <div style="font-size: 36px; font-weight: 700; color: var(--pink-600);">
           ${stats.total}
         </div>
-        <div class="card-meta">
-          Ortalama puan: ${stats.averageRating} / 5
+        <div class="card-meta" style="margin-top: 8px;">
+          Ortalama puan: <strong>${stats.averageRating}</strong> / 5
         </div>
         <div class="card-actions">
           <a href="#/reading-log" class="btn btn-primary btn-sm">Okuma Günlüğü</a>

@@ -806,3 +806,207 @@ main {
     transform: translateX(20px);
   }
 }
+/* ═══════════════════════════════════════════════
+   YILDIZ PUANLAMA
+   ═══════════════════════════════════════════════ */
+.star-rating .stars {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.star {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--gray-300);
+  transition: transform 0.15s, color 0.15s;
+  line-height: 1;
+}
+
+.star-rating-sm .star { font-size: 16px; }
+.star-rating-md .star { font-size: 24px; }
+.star-rating-lg .star { font-size: 36px; }
+
+.star.filled {
+  color: var(--pink-500);
+}
+
+.star-rating:not(.readonly) .star:hover {
+  transform: scale(1.15);
+}
+
+.star-rating.readonly .star {
+  cursor: default;
+}
+
+.star-rating.readonly .star.filled {
+  color: var(--pink-500);
+}
+
+.star-label {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--pink-600);
+  font-weight: 500;
+  min-height: 20px;
+}
+
+/* ═══════════════════════════════════════════════
+   OKUMA GÜNLÜĞÜ
+   ═══════════════════════════════════════════════ */
+.reading-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--pink-100);
+  transition: all 0.2s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.reading-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+  border-color: var(--pink-300);
+}
+
+.reading-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--pink-300);
+}
+
+.reading-card.has-rating-5::before { background: var(--pink-600); }
+.reading-card.has-rating-4::before { background: var(--pink-500); }
+.reading-card.has-rating-3::before { background: var(--pink-400); }
+.reading-card.has-rating-2::before { background: var(--pink-300); }
+.reading-card.has-rating-1::before { background: var(--pink-200); }
+
+.reading-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 4px;
+}
+
+.reading-card-author {
+  font-size: 14px;
+  color: var(--gray-700);
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+.reading-card-review {
+  color: var(--gray-700);
+  font-size: 14px;
+  margin-top: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.reading-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--gray-500);
+}
+
+/* Okuma istatistik bandı */
+.reading-stats-bar {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--pink-100);
+  margin-bottom: 24px;
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.reading-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.reading-stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--pink-600);
+  line-height: 1;
+}
+
+.reading-stat-label {
+  font-size: 13px;
+  color: var(--gray-500);
+  margin-top: 4px;
+}
+
+/* Detay sayfası */
+.reading-detail {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--pink-100);
+}
+
+.reading-detail-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 6px;
+}
+
+.reading-detail-author {
+  font-size: 16px;
+  color: var(--gray-700);
+  font-style: italic;
+  margin-bottom: 16px;
+}
+
+.reading-detail-review {
+  color: var(--gray-900);
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin-top: 20px;
+  padding: 20px;
+  background: var(--pink-50);
+  border-radius: var(--radius);
+  border-left: 3px solid var(--pink-300);
+}
+
+.reading-detail-meta {
+  display: flex;
+  gap: 24px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--pink-100);
+  flex-wrap: wrap;
+}
+
+.reading-detail-meta-item {
+  font-size: 13px;
+}
+
+.reading-detail-meta-label {
+  color: var(--gray-500);
+  margin-bottom: 4px;
+}
+
+.reading-detail-meta-value {
+  color: var(--gray-900);
+  font-weight: 600;
+}

@@ -1,3 +1,5 @@
+import { getToken, clearSession } from './auth.js';
+
 const API_BASE = 'http://localhost:3000/api';
 
 async function request(path, options = {}) {
@@ -7,13 +9,26 @@ async function request(path, options = {}) {
     ...options,
   };
 
+  // Token varsa ekle
+  const token = getToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
   if (config.body && typeof config.body !== 'string') {
     config.body = JSON.stringify(config.body);
   }
 
   const response = await fetch(url, config);
 
-  // 204 (No Content) → boş cevap
+  // 401 → token geçersiz, logout yap
+  const isAuthEndpoint = path.startsWith('/auth/');
+  if (response.status === 401 && !isAuthEndpoint) {
+    clearSession();
+    window.location.hash = '#/welcome';
+    throw new Error('Oturum süresi doldu, lütfen tekrar giriş yapın');
+  }
+
   if (response.status === 204) return null;
 
   const data = await response.json();
@@ -64,9 +79,19 @@ export const readingLogApi = {
   remove: (id)     => request(`/reading-log/${id}`, { method: 'DELETE' }),
   stats:  ()       => request('/reading-log/stats'),
 };
+
 // ═══════════════════════════════════════════════
 // TAGS
 // ═══════════════════════════════════════════════
 export const tagsApi = {
   list: () => request('/tags'),
+};
+
+// ═══════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════
+export const authApi = {
+  register: (data) => request('/auth/register', { method: 'POST', body: data }),
+  login:    (data) => request('/auth/login',    { method: 'POST', body: data }),
+  me:       ()     => request('/auth/me'),
 };

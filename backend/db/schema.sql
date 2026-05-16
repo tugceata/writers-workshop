@@ -7,14 +7,13 @@
 CREATE TABLE users (
     id            SERIAL PRIMARY KEY,
     email         VARCHAR(150) UNIQUE NOT NULL,
-    username      VARCHAR(50) UNIQUE NOT NULL,
+    username      VARCHAR(50),
     password_hash VARCHAR(255) NOT NULL,
     created_at    TIMESTAMP DEFAULT NOW(),
     updated_at    TIMESTAMP DEFAULT NOW()
 );
 
 CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_username ON users(username);
 -- ───────────────────────────────────────────────
 -- KİTAPLAR (yazarın yazdığı kitap projeleri)
 -- ───────────────────────────────────────────────

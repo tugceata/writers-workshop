@@ -41,14 +41,6 @@ async function register(data) {
     throw err;
   }
 
-  // Kullanıcı adı zaten var mı?
-  const existingUsername = await userRepo.findByUsername(value.username);
-  if (existingUsername) {
-    const err = new Error('Bu kullanıcı adı zaten kullanılıyor');
-    err.statusCode = 409;
-    throw err;
-  }
-
   // Şifreyi hash'le
   const password_hash = await bcrypt.hash(value.password, SALT_ROUNDS);
 

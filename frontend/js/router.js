@@ -2,7 +2,6 @@ const routes = [];
 let appElement = null;
 
 export function registerRoute(pattern, handler) {
-  // pattern: '/books/:id'  →  regex'e çeviriyoruz
   const paramNames = [];
   const regexPattern = pattern.replace(/:(\w+)/g, (_, name) => {
     paramNames.push(name);
@@ -13,7 +12,13 @@ export function registerRoute(pattern, handler) {
 }
 
 export function navigate(path) {
-  window.location.hash = path;
+  // Eğer aynı path'teysek hashchange tetiklenmez, manuel render et
+  const target = path.startsWith('#') ? path : '#' + path;
+  if (window.location.hash === target) {
+    render();
+  } else {
+    window.location.hash = path;
+  }
 }
 
 function parseHash() {
@@ -48,7 +53,6 @@ async function render() {
     }
   }
 
-  // Hiçbir route eşleşmedi
   appElement.innerHTML = `
     <div class="empty-state">
       <h2>Sayfa bulunamadı</h2>
@@ -61,6 +65,5 @@ export function initRouter(element) {
   appElement = element;
   window.addEventListener('hashchange', render);
   window.addEventListener('load', render);
-  // Sayfa açıldığında da render et
   render();
 }

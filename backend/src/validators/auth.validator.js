@@ -6,11 +6,9 @@ const registerSchema = Joi.object({
       'string.email': 'Geçerli bir e-posta adresi giriniz',
       'any.required': 'E-posta zorunludur',
     }),
-  username: Joi.string().trim().alphanum().min(3).max(50).required()
+  username: Joi.string().trim().min(1).max(50).allow('', null)
     .messages({
-      'string.alphanum': 'Kullanıcı adı sadece harf ve rakam içerebilir',
-      'string.min': 'Kullanıcı adı en az 3 karakter olmalı',
-      'any.required': 'Kullanıcı adı zorunludur',
+      'string.max': 'İsim en fazla 50 karakter olabilir',
     }),
   password: Joi.string().min(6).max(100).required()
     .messages({

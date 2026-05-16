@@ -70,7 +70,7 @@ export async function renderHome({ app }) {
     <div class="home">
       <!-- Karşılama bandı -->
       <div class="home-hero">
-        <div class="home-hero-title">Hoş geldin cnm</div>
+       <div class="home-hero-title">${getGreeting()}</div>
         ${renderQuote()}
       </div>
 
@@ -258,6 +258,15 @@ function renderQuote() {
       <span class="home-hero-source">— ${q.source}</span>
     </div>
   `;
+}
+
+function getGreeting() {
+  const userRaw = localStorage.getItem('ww_user');
+  const user = userRaw ? JSON.parse(userRaw) : null;
+  if (user && user.username) {
+    return `Hoş geldin, ${escapeHtml(user.username)}`;
+  }
+  return 'Hoş geldin ';
 }
 
 function escapeHtml(str) {

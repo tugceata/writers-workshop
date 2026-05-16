@@ -19,7 +19,7 @@ async function findAll({ rating, genre } = {}) {
     query += ' WHERE ' + conditions.join(' AND ');
   }
 
-  query += ' ORDER BY finished_date DESC NULLS LAST, created_at DESC';
+  query += ' ORDER BY created_at DESC';
 
   const result = await pool.query(query, params);
   return result.rows;

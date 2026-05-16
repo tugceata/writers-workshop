@@ -25,6 +25,18 @@ function groupByGenre(entries) {
   }, {});
 }
 
+function groupByRating(entries) {
+  if (!Array.isArray(entries)) return { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+
+  const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  entries.forEach(entry => {
+    if (entry.rating >= 1 && entry.rating <= 5) {
+      counts[entry.rating]++;
+    }
+  });
+  return counts;
+}
+
 function calculateReadingDays(entry) {
   if (!entry || !entry.started_date || !entry.finished_date) return null;
 
@@ -84,6 +96,7 @@ async function getStats() {
     total: entries.length,
     averageRating: calculateAverageRating(entries),
     byGenre: groupByGenre(entries),
+    byRating: groupByRating(entries),   
   };
 }
 
@@ -91,6 +104,7 @@ module.exports = {
   // Saf fonksiyonlar (test için)
   calculateAverageRating,
   groupByGenre,
+  groupByRating,
   calculateReadingDays,
   // Servis fonksiyonları
   listEntries,

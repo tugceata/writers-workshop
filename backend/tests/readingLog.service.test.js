@@ -108,3 +108,34 @@ describe('calculateReadingDays', () => {
     })).toBe(null);
   });
 });
+
+describe('groupByRating', () => {
+  const { groupByRating } = require('../src/services/readingLog.service');
+
+  test('boş liste için tüm puanlar 0', () => {
+    expect(groupByRating([])).toEqual({ 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 });
+  });
+
+  test('puanları doğru sayar', () => {
+    const entries = [
+      { rating: 5 },
+      { rating: 5 },
+      { rating: 4 },
+      { rating: 3 },
+      { rating: 3 },
+      { rating: 3 },
+    ];
+    expect(groupByRating(entries)).toEqual({ 1: 0, 2: 0, 3: 3, 4: 1, 5: 2 });
+  });
+
+  test('null/geçersiz puanları görmezden gelir', () => {
+    const entries = [
+      { rating: 5 },
+      { rating: null },
+      { rating: 0 },
+      { rating: 6 },
+      { rating: 3 },
+    ];
+    expect(groupByRating(entries)).toEqual({ 1: 0, 2: 0, 3: 1, 4: 0, 5: 1 });
+  });
+});

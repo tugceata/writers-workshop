@@ -3,17 +3,16 @@ const tagService = require('./tag.service');
 const tagRepo = require('../repositories/tag.repo');
 const { bookSchema } = require('../validators/book.validator');
 
-async function listBooks() {
-  const books = await bookRepo.findAll();
-  // Her kitap için tag'leri getir
+async function listBooks(userId) {
+  const books = await bookRepo.findAllByUser(userId);
   for (const book of books) {
     book.tags = await tagRepo.findByBookId(book.id);
   }
   return books;
 }
 
-async function getBookById(id) {
-  const book = await bookRepo.findById(id);
+async function getBookById(id, userId) {
+  const book = await bookRepo.findByIdAndUser(id, userId);
   if (!book) {
     const err = new Error('Kitap bulunamadı');
     err.statusCode = 404;
@@ -23,13 +22,13 @@ async function getBookById(id) {
   return book;
 }
 
-async function createBook(data) {
+async function createBook(userId, data) {
   const { tag_ids, ...bookData } = data;
 
   const { value, error } = bookSchema.validate(bookData);
   if (error) throw error;
 
-  const book = await bookRepo.create(value);
+  const book = await bookRepo.create({ user_id: userId, ...value });
 
   if (tag_ids !== undefined) {
     await tagService.setTagsForBook(book.id, tag_ids);
@@ -39,15 +38,15 @@ async function createBook(data) {
   return book;
 }
 
-async function updateBook(id, data) {
-  await getBookById(id);
+async function updateBook(id, userId, data) {
+  await getBookById(id, userId);  // var mı + kullanıcıya ait mi kontrolü
 
   const { tag_ids, ...bookData } = data;
 
   const { value, error } = bookSchema.validate(bookData);
   if (error) throw error;
 
-  const updated = await bookRepo.update(id, value);
+  const updated = await bookRepo.update(id, userId, value);
 
   if (tag_ids !== undefined) {
     await tagService.setTagsForBook(id, tag_ids);
@@ -57,8 +56,8 @@ async function updateBook(id, data) {
   return updated;
 }
 
-async function deleteBook(id) {
-  const deleted = await bookRepo.remove(id);
+async function deleteBook(id, userId) {
+  const deleted = await bookRepo.remove(id, userId);
   if (!deleted) {
     const err = new Error('Kitap bulunamadı');
     err.statusCode = 404;

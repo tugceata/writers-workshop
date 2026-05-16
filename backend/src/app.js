@@ -30,10 +30,18 @@ app.get('/', (req, res) => {
 });
 
 // Route'lar
-app.use('/api/books', require('./routes/books.routes'));
-app.use('/api/books/:bookId/chapters', require('./routes/chapters.routes'));
-app.use('/api/reading-log', require('./routes/readingLog.routes'));
+const authMiddleware = require('./middleware/authMiddleware');
+
+// Auth (giriş gerektirmez)
+app.use('/api/auth', require('./routes/auth.routes'));
+
+// Tags (herkes okuyabilir, sadece liste)
 app.use('/api/tags', require('./routes/tags.routes'));
+
+// Korumalı route'lar (auth gerekir)
+app.use('/api/books', authMiddleware, require('./routes/books.routes'));
+app.use('/api/books/:bookId/chapters', authMiddleware, require('./routes/chapters.routes'));
+app.use('/api/reading-log', authMiddleware, require('./routes/readingLog.routes'));
 
 // 404 yakalayıcı
 app.use((req, res) => {

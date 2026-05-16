@@ -1,12 +1,26 @@
 -- ═══════════════════════════════════════════════
 -- WRITERS WORKSHOP - VERİTABANI ŞEMASI
 -- ═══════════════════════════════════════════════
+-- ═══════════════════════════════════════════════
+-- KULLANICILAR
+-- ═══════════════════════════════════════════════
+CREATE TABLE users (
+    id            SERIAL PRIMARY KEY,
+    email         VARCHAR(150) UNIQUE NOT NULL,
+    username      VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at    TIMESTAMP DEFAULT NOW(),
+    updated_at    TIMESTAMP DEFAULT NOW()
+);
 
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_username ON users(username);
 -- ───────────────────────────────────────────────
 -- KİTAPLAR (yazarın yazdığı kitap projeleri)
 -- ───────────────────────────────────────────────
 CREATE TABLE books (
     id          SERIAL PRIMARY KEY,
+    user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     title       VARCHAR(200) NOT NULL,
     genre       VARCHAR(50),
     description TEXT,
@@ -16,6 +30,8 @@ CREATE TABLE books (
     created_at  TIMESTAMP DEFAULT NOW(),
     updated_at  TIMESTAMP DEFAULT NOW()
 );
+
+CREATE INDEX idx_books_user ON books(user_id);
 
 -- ───────────────────────────────────────────────
 -- BÖLÜMLER (kitabın bölümleri, içerik HTML olarak)
@@ -57,6 +73,7 @@ CREATE INDEX idx_entities_type ON story_entities(book_id, entity_type);
 -- ───────────────────────────────────────────────
 CREATE TABLE reading_log (
     id            SERIAL PRIMARY KEY,
+    user_id       INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     title         VARCHAR(200) NOT NULL,
     author        VARCHAR(150),
     genre         VARCHAR(50),
@@ -67,6 +84,8 @@ CREATE TABLE reading_log (
     created_at    TIMESTAMP DEFAULT NOW(),
     updated_at    TIMESTAMP DEFAULT NOW()
 );
+
+CREATE INDEX idx_reading_log_user ON reading_log(user_id);
 
 -- ───────────────────────────────────────────────
 -- İLHAM BAĞLARI (okuma → bölüm veya karakter)

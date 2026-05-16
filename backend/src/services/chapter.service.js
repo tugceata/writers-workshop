@@ -8,9 +8,7 @@ const { chapterSchema } = require('../validators/chapter.validator');
 
 function countWords(htmlContent) {
   if (!htmlContent || typeof htmlContent !== 'string') return 0;
-  // HTML tag'lerini temizle
   const text = htmlContent.replace(/<[^>]*>/g, ' ');
-  // Birden çok boşluğu tek boşluğa indir, kelimelere böl
   const words = text.trim().split(/\s+/).filter(w => w.length > 0);
   return words.length;
 }
@@ -21,11 +19,11 @@ function nextChapterOrder(currentMaxOrder) {
 }
 
 // ═══════════════════════════════════════════════
-// SERVİS FONKSİYONLARI
+// YARDIMCI: Kitap bu kullanıcıya mı ait?
 // ═══════════════════════════════════════════════
 
-async function assertBookExists(bookId) {
-  const book = await bookRepo.findById(bookId);
+async function assertBookBelongsToUser(bookId, userId) {
+  const book = await bookRepo.findByIdAndUser(bookId, userId);
   if (!book) {
     const err = new Error('Kitap bulunamadı');
     err.statusCode = 404;
@@ -34,13 +32,17 @@ async function assertBookExists(bookId) {
   return book;
 }
 
-async function listChapters(bookId) {
-  await assertBookExists(bookId);
+// ═══════════════════════════════════════════════
+// SERVİS FONKSİYONLARI
+// ═══════════════════════════════════════════════
+
+async function listChapters(bookId, userId) {
+  await assertBookBelongsToUser(bookId, userId);
   return chapterRepo.findByBookId(bookId);
 }
 
-async function getChapterById(bookId, chapterId) {
-  await assertBookExists(bookId);
+async function getChapterById(bookId, chapterId, userId) {
+  await assertBookBelongsToUser(bookId, userId);
   const chapter = await chapterRepo.findById(chapterId);
   if (!chapter || chapter.book_id !== parseInt(bookId, 10)) {
     const err = new Error('Bölüm bulunamadı');
@@ -50,17 +52,14 @@ async function getChapterById(bookId, chapterId) {
   return chapter;
 }
 
-async function createChapter(bookId, data) {
-  await assertBookExists(bookId);
+async function createChapter(bookId, userId, data) {
+  await assertBookBelongsToUser(bookId, userId);
 
   const { value, error } = chapterSchema.validate(data);
   if (error) throw error;
 
-  // Sıradaki order numarasını bul
   const maxOrder = await chapterRepo.getMaxOrder(bookId);
   const order = value.chapter_order ?? nextChapterOrder(maxOrder);
-
-  // Kelime sayısını hesapla
   const wordCount = countWords(value.content);
 
   return chapterRepo.create({
@@ -73,8 +72,8 @@ async function createChapter(bookId, data) {
   });
 }
 
-async function updateChapter(bookId, chapterId, data) {
-  const existing = await getChapterById(bookId, chapterId);
+async function updateChapter(bookId, chapterId, userId, data) {
+  const existing = await getChapterById(bookId, chapterId, userId);
 
   const { value, error } = chapterSchema.validate(data);
   if (error) throw error;
@@ -88,17 +87,15 @@ async function updateChapter(bookId, chapterId, data) {
   });
 }
 
-async function deleteChapter(bookId, chapterId) {
-  await getChapterById(bookId, chapterId); // önce var mı?
+async function deleteChapter(bookId, chapterId, userId) {
+  await getChapterById(bookId, chapterId, userId);
   await chapterRepo.remove(chapterId);
   return { deleted: true };
 }
 
 module.exports = {
-  // Saf fonksiyonlar (test için)
   countWords,
   nextChapterOrder,
-  // Servis fonksiyonları
   listChapters,
   getChapterById,
   createChapter,

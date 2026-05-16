@@ -1,22 +1,17 @@
 const pool = require('../config/db');
 
-async function findAll({ rating, genre } = {}) {
-  let query = 'SELECT * FROM reading_log';
-  const params = [];
-  const conditions = [];
+async function findAllByUser(userId, { rating, genre } = {}) {
+  let query = 'SELECT * FROM reading_log WHERE user_id = $1';
+  const params = [userId];
 
   if (rating !== undefined) {
     params.push(rating);
-    conditions.push(`rating = $${params.length}`);
+    query += ` AND rating = $${params.length}`;
   }
 
   if (genre) {
     params.push(genre);
-    conditions.push(`genre = $${params.length}`);
-  }
-
-  if (conditions.length > 0) {
-    query += ' WHERE ' + conditions.join(' AND ');
+    query += ` AND genre = $${params.length}`;
   }
 
   query += ' ORDER BY created_at DESC';
@@ -25,27 +20,27 @@ async function findAll({ rating, genre } = {}) {
   return result.rows;
 }
 
-async function findById(id) {
+async function findByIdAndUser(id, userId) {
   const result = await pool.query(
-    'SELECT * FROM reading_log WHERE id = $1',
-    [id]
+    'SELECT * FROM reading_log WHERE id = $1 AND user_id = $2',
+    [id, userId]
   );
   return result.rows[0] || null;
 }
 
 async function create(entry) {
-  const { title, author, genre, rating, review, started_date, finished_date } = entry;
+  const { user_id, title, author, genre, rating, review, started_date, finished_date } = entry;
   const result = await pool.query(
     `INSERT INTO reading_log
-       (title, author, genre, rating, review, started_date, finished_date)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)
+       (user_id, title, author, genre, rating, review, started_date, finished_date)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
      RETURNING *`,
-    [title, author, genre, rating, review, started_date, finished_date]
+    [user_id, title, author, genre, rating, review, started_date, finished_date]
   );
   return result.rows[0];
 }
 
-async function update(id, entry) {
+async function update(id, userId, entry) {
   const { title, author, genre, rating, review, started_date, finished_date } = entry;
   const result = await pool.query(
     `UPDATE reading_log
@@ -57,24 +52,24 @@ async function update(id, entry) {
          started_date = $6,
          finished_date = $7,
          updated_at = NOW()
-     WHERE id = $8
+     WHERE id = $8 AND user_id = $9
      RETURNING *`,
-    [title, author, genre, rating, review, started_date, finished_date, id]
+    [title, author, genre, rating, review, started_date, finished_date, id, userId]
   );
   return result.rows[0] || null;
 }
 
-async function remove(id) {
+async function remove(id, userId) {
   const result = await pool.query(
-    'DELETE FROM reading_log WHERE id = $1 RETURNING id',
-    [id]
+    'DELETE FROM reading_log WHERE id = $1 AND user_id = $2 RETURNING id',
+    [id, userId]
   );
   return result.rowCount > 0;
 }
 
 module.exports = {
-  findAll,
-  findById,
+  findAllByUser,
+  findByIdAndUser,
   create,
   update,
   remove,

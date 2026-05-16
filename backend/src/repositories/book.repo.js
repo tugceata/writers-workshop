@@ -1,32 +1,33 @@
 const pool = require('../config/db');
 
-async function findAll() {
+async function findAllByUser(userId) {
   const result = await pool.query(
-    'SELECT * FROM books ORDER BY created_at DESC'
+    'SELECT * FROM books WHERE user_id = $1 ORDER BY created_at DESC',
+    [userId]
   );
   return result.rows;
 }
 
-async function findById(id) {
+async function findByIdAndUser(id, userId) {
   const result = await pool.query(
-    'SELECT * FROM books WHERE id = $1',
-    [id]
+    'SELECT * FROM books WHERE id = $1 AND user_id = $2',
+    [id, userId]
   );
   return result.rows[0] || null;
 }
 
 async function create(book) {
-  const { title, description, goals, status } = book;
+  const { user_id, title, description, goals, status } = book;
   const result = await pool.query(
-    `INSERT INTO books (title, description, goals, status)
-     VALUES ($1, $2, $3, $4)
+    `INSERT INTO books (user_id, title, description, goals, status)
+     VALUES ($1, $2, $3, $4, $5)
      RETURNING *`,
-    [title, description, goals, status]
+    [user_id, title, description, goals, status]
   );
   return result.rows[0];
 }
 
-async function update(id, book) {
+async function update(id, userId, book) {
   const { title, description, goals, status } = book;
   const result = await pool.query(
     `UPDATE books
@@ -35,24 +36,24 @@ async function update(id, book) {
          goals = $3,
          status = $4,
          updated_at = NOW()
-     WHERE id = $5
+     WHERE id = $5 AND user_id = $6
      RETURNING *`,
-    [title, description, goals, status, id]
+    [title, description, goals, status, id, userId]
   );
   return result.rows[0] || null;
 }
 
-async function remove(id) {
+async function remove(id, userId) {
   const result = await pool.query(
-    'DELETE FROM books WHERE id = $1 RETURNING id',
-    [id]
+    'DELETE FROM books WHERE id = $1 AND user_id = $2 RETURNING id',
+    [id, userId]
   );
   return result.rowCount > 0;
 }
 
 module.exports = {
-  findAll,
-  findById,
+  findAllByUser,
+  findByIdAndUser,
   create,
   update,
   remove,

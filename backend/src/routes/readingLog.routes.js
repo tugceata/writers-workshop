@@ -7,22 +7,21 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: Reading Log
- *   description: Okuduğun kitapların kaydı
+ *   description: Okuma günlüğü (auth gerektirir)
  */
 
 /**
  * @swagger
  * /api/reading-log/stats:
  *   get:
- *     summary: Okuma istatistikleri (toplam, ortalama puan, türlere göre)
+ *     summary: Okuma istatistikleri
  *     tags: [Reading Log]
- *     responses:
- *       200:
- *         description: İstatistikler
+ *     security:
+ *       - bearerAuth: []
  */
 router.get('/stats', async (req, res, next) => {
   try {
-    const stats = await readingLogService.getStats();
+    const stats = await readingLogService.getStats(req.user.id);
     res.json(stats);
   } catch (err) {
     next(err);
@@ -35,28 +34,15 @@ router.get('/stats', async (req, res, next) => {
  *   get:
  *     summary: Tüm okumaları listele
  *     tags: [Reading Log]
- *     parameters:
- *       - in: query
- *         name: rating
- *         schema:
- *           type: integer
- *         description: Belirli bir puana göre filtrele
- *       - in: query
- *         name: genre
- *         schema:
- *           type: string
- *         description: Belirli bir türe göre filtrele
- *     responses:
- *       200:
- *         description: Okuma listesi
+ *     security:
+ *       - bearerAuth: []
  */
 router.get('/', async (req, res, next) => {
   try {
     const filters = {};
     if (req.query.rating) filters.rating = parseInt(req.query.rating, 10);
     if (req.query.genre) filters.genre = req.query.genre;
-
-    const entries = await readingLogService.listEntries(filters);
+    const entries = await readingLogService.listEntries(req.user.id, filters);
     res.json(entries);
   } catch (err) {
     next(err);
@@ -69,21 +55,12 @@ router.get('/', async (req, res, next) => {
  *   get:
  *     summary: Tek okuma kaydı
  *     tags: [Reading Log]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Okuma kaydı bulundu
- *       404:
- *         description: Okuma kaydı bulunamadı
+ *     security:
+ *       - bearerAuth: []
  */
 router.get('/:id', async (req, res, next) => {
   try {
-    const entry = await readingLogService.getEntryById(req.params.id);
+    const entry = await readingLogService.getEntryById(req.params.id, req.user.id);
     res.json(entry);
   } catch (err) {
     next(err);
@@ -94,46 +71,14 @@ router.get('/:id', async (req, res, next) => {
  * @swagger
  * /api/reading-log:
  *   post:
- *     summary: Yeni okuma kaydı oluştur
+ *     summary: Yeni okuma kaydı
  *     tags: [Reading Log]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [title]
- *             properties:
- *               title:
- *                 type: string
- *                 example: "Kürk Mantolu Madonna"
- *               author:
- *                 type: string
- *                 example: "Sabahattin Ali"
- *               genre:
- *                 type: string
- *                 example: "roman"
- *               rating:
- *                 type: integer
- *                 minimum: 1
- *                 maximum: 5
- *               review:
- *                 type: string
- *               started_date:
- *                 type: string
- *                 format: date
- *               finished_date:
- *                 type: string
- *                 format: date
- *     responses:
- *       201:
- *         description: Kayıt oluşturuldu
- *       400:
- *         description: Doğrulama hatası
+ *     security:
+ *       - bearerAuth: []
  */
 router.post('/', async (req, res, next) => {
   try {
-    const entry = await readingLogService.createEntry(req.body);
+    const entry = await readingLogService.createEntry(req.user.id, req.body);
     res.status(201).json(entry);
   } catch (err) {
     next(err);
@@ -146,44 +91,12 @@ router.post('/', async (req, res, next) => {
  *   put:
  *     summary: Okuma kaydını güncelle
  *     tags: [Reading Log]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               author:
- *                 type: string
- *               genre:
- *                 type: string
- *               rating:
- *                 type: integer
- *               review:
- *                 type: string
- *               started_date:
- *                 type: string
- *                 format: date
- *               finished_date:
- *                 type: string
- *                 format: date
- *     responses:
- *       200:
- *         description: Kayıt güncellendi
- *       404:
- *         description: Kayıt bulunamadı
+ *     security:
+ *       - bearerAuth: []
  */
 router.put('/:id', async (req, res, next) => {
   try {
-    const entry = await readingLogService.updateEntry(req.params.id, req.body);
+    const entry = await readingLogService.updateEntry(req.params.id, req.user.id, req.body);
     res.json(entry);
   } catch (err) {
     next(err);
@@ -196,21 +109,12 @@ router.put('/:id', async (req, res, next) => {
  *   delete:
  *     summary: Okuma kaydını sil
  *     tags: [Reading Log]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       204:
- *         description: Silindi
- *       404:
- *         description: Kayıt bulunamadı
+ *     security:
+ *       - bearerAuth: []
  */
 router.delete('/:id', async (req, res, next) => {
   try {
-    await readingLogService.deleteEntry(req.params.id);
+    await readingLogService.deleteEntry(req.params.id, req.user.id);
     res.status(204).send();
   } catch (err) {
     next(err);

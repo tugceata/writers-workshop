@@ -96,10 +96,34 @@ async function getCurrentUser(userId) {
   return user;
 }
 
+async function updateUsername(userId, newUsername) {
+  // Boş veya null ise null'a çevir
+  const username = newUsername && newUsername.trim() !== '' ? newUsername.trim() : null;
+
+  if (username && username.length > 50) {
+    const err = new Error('İsim en fazla 50 karakter olabilir');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const userRepo = require('../repositories/user.repo');
+  const pool = require('../config/db');
+
+  const result = await pool.query(
+    `UPDATE users SET username = $1, updated_at = NOW()
+     WHERE id = $2
+     RETURNING id, email, username, created_at, updated_at`,
+    [username, userId]
+  );
+
+  return result.rows[0];
+}
+
 module.exports = {
   generateToken,
   verifyToken,
   register,
   login,
   getCurrentUser,
+  updateUsername
 };

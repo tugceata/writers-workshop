@@ -91,7 +91,8 @@ export const tagsApi = {
 // AUTH
 // ═══════════════════════════════════════════════
 export const authApi = {
-  register: (data) => request('/auth/register', { method: 'POST', body: data }),
-  login:    (data) => request('/auth/login',    { method: 'POST', body: data }),
-  me:       ()     => request('/auth/me'),
+  register:       (data) => request('/auth/register', { method: 'POST', body: data }),
+  login:          (data) => request('/auth/login',    { method: 'POST', body: data }),
+  me:             ()     => request('/auth/me'),
+  updateUsername: (data) => request('/auth/me', { method: 'PATCH', body: data }),
 };

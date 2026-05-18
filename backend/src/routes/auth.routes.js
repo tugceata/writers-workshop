@@ -107,4 +107,22 @@ router.get('/me', authMiddleware, async (req, res, next) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/auth/me:
+ *   patch:
+ *     summary: Kullanıcı ismini güncelle
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.patch('/me', authMiddleware, async (req, res, next) => {
+  try {
+    const user = await authService.updateUsername(req.user.id, req.body.username);
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

@@ -1,6 +1,6 @@
 import { initRouter, registerRoute, navigate } from './router.js';
 import { isLoggedIn, getUser, clearSession } from './auth.js';
-
+import { renderProfile } from './views/profileView.js';
 import { renderHome } from './views/homeView.js';
 import { renderBooksList } from './views/booksView.js';
 import { renderBookForm } from './views/bookFormView.js';
@@ -50,26 +50,33 @@ registerRoute('/books/new',                         protect(renderBookForm));
 registerRoute('/books/:id/edit',                    protect(renderBookForm));
 registerRoute('/books/:bookId/chapters/:chapterId', protect(renderChapterEditor));
 registerRoute('/books/:id',                         protect(renderBookDetail));
-
+registerRoute('/profile',                           protect(renderProfile));
 registerRoute('/reading-log',                       protect(renderReadingLog));
 registerRoute('/reading-log/new',                   protect(renderReadingLogForm));
 registerRoute('/reading-log/:id/edit',              protect(renderReadingLogForm));
 registerRoute('/reading-log/:id',                   protect(renderReadingLogDetail));
 
-// Üst menüyü render et (giriş durumuna göre)
 function renderTopbar() {
-  const navEl = document.querySelector('.topbar .nav');
-  if (!navEl) return;
+  const userArea = document.getElementById('topbar-user-area');
+  const subnav = document.getElementById('subnav-links');
+  if (!userArea || !subnav) return;
 
   const user = getUser();
+  const currentPath = window.location.hash.slice(1) || '/';
+
   if (user) {
-    navEl.innerHTML = `
-      <a href="#/books" class="nav-link">Kitaplarım</a>
-      <a href="#/reading-log" class="nav-link">Okuma Günlüğü</a>
+    // Sağ üst: kullanıcı bilgisi
+    userArea.innerHTML = `
       <div class="topbar-user">
-        ${user.username ? `<span class="topbar-username">${escapeHtml(user.username)}</span>` : ''}
+      <a href="#/profile" class="topbar-username">${user.username ? escapeHtml(user.username) : 'Profil'}</a>
         <button class="topbar-logout" id="logout-btn">Çıkış</button>
       </div>
+    `;
+
+    // Alt menü: sayfa navigasyonu
+    subnav.innerHTML = `
+      <a href="#/books" class="subnav-link ${isActive(currentPath, '/books') ? 'active' : ''}">Kitaplarım</a>
+      <a href="#/reading-log" class="subnav-link ${isActive(currentPath, '/reading-log') ? 'active' : ''}">Kütüphanem</a>
     `;
 
     document.getElementById('logout-btn').addEventListener('click', () => {
@@ -78,8 +85,16 @@ function renderTopbar() {
       renderTopbar();
     });
   } else {
-    navEl.innerHTML = ''; // login değilse boş
+    userArea.innerHTML = '';
+    subnav.innerHTML = '';
   }
+}
+
+function isActive(currentPath, targetPath) {
+  // /books, /books/1, /books/new → tümü "Kitaplarım"ı aktif eder
+  if (targetPath === '/books') return currentPath === '/books' || currentPath.startsWith('/books/');
+  if (targetPath === '/reading-log') return currentPath === '/reading-log' || currentPath.startsWith('/reading-log/');
+  return currentPath === targetPath;
 }
 
 function escapeHtml(str) {
@@ -95,18 +110,25 @@ window.addEventListener('hashchange', renderTopbar);
 // Sayfa açıldığında
 const app = document.getElementById('app');
 initRouter(app);
-renderTopbar();
+
+// DOM tamamen hazır olunca topbar'ı render et
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', renderTopbar);
+} else {
+  renderTopbar();
+}
 
 // Welcome sayfasında topbar'ı tamamen sakla
 function toggleTopbarVisibility() {
   const topbar = document.querySelector('.topbar');
+  const subnav = document.querySelector('.subnav');
   const path = window.location.hash.slice(1) || '/';
-  if (PUBLIC_ROUTES.includes(path) && !isLoggedIn()) {
-    topbar.style.display = 'none';
-  } else {
-    topbar.style.display = '';
-  }
+  const hideAll = PUBLIC_ROUTES.includes(path) && !isLoggedIn();
+
+  if (topbar) topbar.style.display = hideAll ? 'none' : '';
+  if (subnav) subnav.style.display = hideAll ? 'none' : '';
 }
+
 window.addEventListener('hashchange', toggleTopbarVisibility);
 window.addEventListener('load', toggleTopbarVisibility);
 toggleTopbarVisibility();

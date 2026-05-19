@@ -125,4 +125,40 @@ router.patch('/me', authMiddleware, async (req, res, next) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/auth/change-password:
+ *   post:
+ *     summary: Şifre değiştir
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.post('/change-password', authMiddleware, async (req, res, next) => {
+  try {
+    const result = await authService.changePassword(req.user.id, req.body);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * @swagger
+ * /api/auth/me:
+ *   delete:
+ *     summary: Hesabı kalıcı olarak sil
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.delete('/me', authMiddleware, async (req, res, next) => {
+  try {
+    await authService.deleteAccount(req.user.id);
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

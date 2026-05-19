@@ -1,3 +1,4 @@
+import './theme.js';
 import { initRouter, registerRoute, navigate } from './router.js';
 import { isLoggedIn, getUser, clearSession } from './auth.js';
 import { renderProfile } from './views/profileView.js';

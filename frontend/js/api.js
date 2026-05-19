@@ -95,4 +95,6 @@ export const authApi = {
   login:          (data) => request('/auth/login',    { method: 'POST', body: data }),
   me:             ()     => request('/auth/me'),
   updateUsername: (data) => request('/auth/me', { method: 'PATCH', body: data }),
+  changePassword: (data) => request('/auth/change-password', { method: 'POST', body: data }),
+  deleteAccount:  ()     => request('/auth/me', { method: 'DELETE' }),
 };

@@ -188,3 +188,25 @@ CREATE TABLE book_tags (
     tag_id  INTEGER REFERENCES tags(id) ON DELETE CASCADE,
     PRIMARY KEY (book_id, tag_id)
 );
+
+-- ═══════════════════════════════════════════════
+-- TRIGGER: bölüm değişince kitabın updated_at'ini güncelle
+-- ═══════════════════════════════════════════════
+
+CREATE OR REPLACE FUNCTION update_book_timestamp_on_chapter_change()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF (TG_OP = 'DELETE') THEN
+    UPDATE books SET updated_at = NOW() WHERE id = OLD.book_id;
+    RETURN OLD;
+  ELSE
+    UPDATE books SET updated_at = NOW() WHERE id = NEW.book_id;
+    RETURN NEW;
+  END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER chapter_changes_update_book
+AFTER INSERT OR UPDATE OR DELETE ON chapters
+FOR EACH ROW
+EXECUTE FUNCTION update_book_timestamp_on_chapter_change();

@@ -2090,3 +2090,126 @@ main {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+/* ═══════════════════════════════════════════════
+   KİTAP KARTI — Tıklanabilir
+   ═══════════════════════════════════════════════ */
+.book-card {
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  min-height: 200px;
+  padding: 24px;
+  padding-right: 90px;
+  display: flex;
+  flex-direction: column;
+}
+
+.book-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--theme-300);
+}
+
+.book-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.book-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gray-900);
+  flex: 1;
+}
+
+.book-card-description {
+  color: var(--gray-700);
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.book-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.tag-chip {
+  background: var(--theme-50);
+  color: var(--theme-700);
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid var(--theme-100);
+}
+
+.book-card-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+
+.book-card:hover .book-card-actions {
+  opacity: 1;
+}
+
+.book-card-action {
+  background: white;
+  border: 1px solid var(--theme-200);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  color: var(--gray-700);
+}
+
+.book-card-action:hover {
+  background: var(--theme-50);
+  border-color: var(--theme-400);
+  color: var(--theme-700);
+}
+
+.book-card-action-danger:hover {
+  background: #FEE2E2;
+  border-color: #FCA5A5;
+  color: #B91C1C;
+}
+
+/* Durum etiketleri */
+.badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.badge-draft {
+  background: var(--theme-100);
+  color: var(--theme-700);
+}
+
+.badge-completed {
+  background: var(--theme-600);
+  color: white;
+}

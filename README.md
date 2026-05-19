@@ -1,4 +1,4 @@
-# Writers Workshop 🌸
+# Writers Workshop 
 
 **Writers Workshop**, yazarlar ve okurlar için tasarlanmış kişisel bir yaratıcı yazarlık platformudur. Kullanıcı kendi kitap projelerini oluşturur, bölüm bölüm yazar, okuduğu kitapları puanlı yorumlarla bir günlükte saklar. Tüm veriler kişiye özeldir — her kullanıcının kendi dünyası vardır.
 

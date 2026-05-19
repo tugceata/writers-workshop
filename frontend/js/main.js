@@ -1,5 +1,7 @@
 import './theme.js';
 import { initRouter, registerRoute, navigate } from './router.js';
+import { renderReadChapter } from './views/readChapterView.js';
+import { renderBookRead } from './views/bookReadView.js';
 import { isLoggedIn, getUser, clearSession } from './auth.js';
 import { renderProfile } from './views/profileView.js';
 import { renderHome } from './views/homeView.js';
@@ -50,13 +52,14 @@ registerRoute('/books',                             protect(renderBooksList));
 registerRoute('/books/new',                         protect(renderBookForm));
 registerRoute('/books/:id/edit',                    protect(renderBookForm));
 registerRoute('/books/:bookId/chapters/:chapterId', protect(renderChapterEditor));
-registerRoute('/books/:id',                         protect(renderBookDetail));
+registerRoute('/books/:id/read', protect(renderBookRead));
+registerRoute('/books/:id',      protect(renderBookDetail));
 registerRoute('/profile',                           protect(renderProfile));
 registerRoute('/reading-log',                       protect(renderReadingLog));
 registerRoute('/reading-log/new',                   protect(renderReadingLogForm));
 registerRoute('/reading-log/:id/edit',              protect(renderReadingLogForm));
 registerRoute('/reading-log/:id',                   protect(renderReadingLogDetail));
-
+registerRoute('/books/:bookId/chapters/:chapterId/read', protect(renderReadChapter));
 function renderTopbar() {
   const userArea = document.getElementById('topbar-user-area');
   const subnav = document.getElementById('subnav-links');
@@ -130,6 +133,27 @@ function toggleTopbarVisibility() {
   if (subnav) subnav.style.display = hideAll ? 'none' : '';
 }
 
-window.addEventListener('hashchange', toggleTopbarVisibility);
-window.addEventListener('load', toggleTopbarVisibility);
+function applyThemeForCurrentRoute() {
+  const path = window.location.hash.slice(1) || '/';
+  const isPublicRoute = PUBLIC_ROUTES.includes(path);
+
+  if (isPublicRoute && !isLoggedIn()) {
+    document.documentElement.setAttribute('data-theme', 'rose');
+  } else {
+    const userRaw = localStorage.getItem('ww_user');
+    const user = userRaw ? JSON.parse(userRaw) : null;
+    const theme = (user && user.theme) || 'rose';
+    document.documentElement.setAttribute('data-theme', theme);
+  }
+}
+
+window.addEventListener('hashchange', () => {
+  toggleTopbarVisibility();
+  applyThemeForCurrentRoute();
+});
+window.addEventListener('load', () => {
+  toggleTopbarVisibility();
+  applyThemeForCurrentRoute();
+});
 toggleTopbarVisibility();
+applyThemeForCurrentRoute();

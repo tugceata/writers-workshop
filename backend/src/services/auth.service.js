@@ -51,6 +51,8 @@ async function register(data) {
     password_hash,
   });
 
+  user.theme = user.theme || 'rose';
+
   // Token oluştur ve döndür
   const token = generateToken(user);
   return { user, token };
@@ -79,6 +81,7 @@ async function login(data) {
     id: user.id,
     email: user.email,
     username: user.username,
+    theme: user.theme || 'rose',
     created_at: user.created_at,
   };
 
@@ -106,13 +109,11 @@ async function updateUsername(userId, newUsername) {
     throw err;
   }
 
-  const userRepo = require('../repositories/user.repo');
   const pool = require('../config/db');
-
   const result = await pool.query(
     `UPDATE users SET username = $1, updated_at = NOW()
      WHERE id = $2
-     RETURNING id, email, username, created_at, updated_at`,
+     RETURNING id, email, username, theme, created_at, updated_at`,
     [username, userId]
   );
 
@@ -171,6 +172,25 @@ async function deleteAccount(userId) {
   return { deleted: true };
 }
 
+async function updateTheme(userId, theme) {
+  const allowed = ['rose', 'lavender', 'ocean', 'forest'];
+  if (!allowed.includes(theme)) {
+    const err = new Error('Geçersiz tema');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const pool = require('../config/db');
+  const result = await pool.query(
+    `UPDATE users SET theme = $1, updated_at = NOW()
+     WHERE id = $2
+     RETURNING id, email, username, theme, created_at, updated_at`,
+    [theme, userId]
+  );
+
+  return result.rows[0];
+}
+
 module.exports = {
   generateToken,
   verifyToken,
@@ -179,5 +199,6 @@ module.exports = {
   getCurrentUser,
   updateUsername,
   changePassword,
-  deleteAccount
+  deleteAccount,
+  updateTheme,
 };

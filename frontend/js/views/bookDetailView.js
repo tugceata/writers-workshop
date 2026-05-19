@@ -17,9 +17,10 @@ export async function renderBookDetail({ params, app }) {
     <div class="page-header">
       <h1>${escapeHtml(book.title)}</h1>
       <div style="display: flex; gap: 8px;">
-        <a href="#/books/${book.id}/edit" class="btn btn-secondary">Düzenle</a>
-        <a href="#/books" class="btn btn-secondary">← Kitaplarım</a>
-      </div>
+  <a href="#/books/${book.id}/read" class="btn btn-primary">Önizleme</a>
+  <a href="#/books/${book.id}/edit" class="btn btn-secondary">Düzenle</a>
+  <a href="#/books" class="btn btn-secondary">← Kitaplarım</a>
+</div>
     </div>
 
     <div class="card">
@@ -137,6 +138,9 @@ function chapterItem(chapter, bookId) {
         <div class="chapter-meta">${wordsText}</div>
       </div>
       <div class="chapter-actions">
+        <a href="#/books/${bookId}/chapters/${chapter.id}/read" class="btn btn-secondary btn-sm" title="Oku">
+          Oku
+        </a>
         <button class="btn btn-danger btn-sm" data-delete-chapter="${chapter.id}" title="Sil">
           Sil
         </button>

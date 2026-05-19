@@ -2,7 +2,7 @@ import { authApi } from '../api.js';
 import { getUser, setSession, getToken, clearSession } from '../auth.js';
 import { navigate } from '../router.js';
 import { toast } from '../components/toast.js';
-import { THEMES, getTheme, setTheme } from '../theme.js';
+import { THEMES, applyTheme } from '../theme.js';
 
 export async function renderProfile({ app }) {
   let user;
@@ -18,7 +18,7 @@ export async function renderProfile({ app }) {
       })
     : '';
 
-  const currentTheme = getTheme();
+const currentTheme = (user && user.theme) || 'rose';
 
   app.innerHTML = `
     <div class="page-header">
@@ -213,14 +213,22 @@ export async function renderProfile({ app }) {
   });
 
   // Tema seçimi
-  document.querySelectorAll('.theme-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const themeId = card.dataset.themeId;
-      setTheme(themeId);
+  // Tema seçimi
+document.querySelectorAll('.theme-card').forEach(card => {
+  card.addEventListener('click', async () => {
+    const themeId = card.dataset.themeId;
+    try {
+      const updatedUser = await authApi.updateTheme({ theme: themeId });
+      const token = getToken();
+      setSession(token, updatedUser);
+      applyTheme(themeId);
       toast.success(`${THEMES[themeId].name} teması uygulandı`);
-      renderProfile({ app }); // yeniden render — aktif badge güncellensin
-    });
+      renderProfile({ app });
+    } catch (err) {
+      toast.error('Tema güncellenemedi: ' + err.message);
+    }
   });
+});
 
   // Hesap silme
   document.getElementById('delete-account-btn').addEventListener('click', async () => {

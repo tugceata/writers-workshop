@@ -161,4 +161,22 @@ router.delete('/me', authMiddleware, async (req, res, next) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/auth/theme:
+ *   patch:
+ *     summary: Kullanıcının temasını güncelle
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ */
+router.patch('/theme', authMiddleware, async (req, res, next) => {
+  try {
+    const user = await authService.updateTheme(req.user.id, req.body.theme);
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

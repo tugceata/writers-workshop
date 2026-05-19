@@ -2213,3 +2213,507 @@ main {
   background: var(--theme-600);
   color: white;
 }
+/* ═══════════════════════════════════════════════
+   OKUMA MODU (READ-ONLY CHAPTER VIEW)
+   ═══════════════════════════════════════════════ */
+
+/* Üst sabit ilerleme barı */
+.read-progress-track {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--theme-100);
+  z-index: 100;
+}
+
+.read-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--theme-400), var(--theme-600));
+  width: 0%;
+  transition: width 0.1s ease-out;
+  box-shadow: 0 0 8px var(--theme-300);
+}
+
+/* Sayfa düzeni */
+.read-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.read-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--theme-100);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.read-back {
+  color: var(--theme-600);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.read-back:hover {
+  color: var(--theme-700);
+}
+
+.read-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Makale */
+.read-article {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 56px 64px;
+  border: 1px solid var(--theme-100);
+  box-shadow: var(--shadow);
+}
+
+.read-article-header {
+  margin-bottom: 40px;
+  text-align: center;
+  padding-bottom: 28px;
+  border-bottom: 1px dashed var(--theme-200);
+}
+
+.read-meta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  color: var(--gray-500);
+  font-size: 13px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  margin-bottom: 12px;
+}
+
+.read-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--theme-700);
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* Asıl içerik — kitap tipografisi */
+.read-content {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 18px;
+  line-height: 1.9;
+  color: var(--gray-900);
+  text-align: justify;
+  hyphens: auto;
+}
+
+.read-content p {
+  margin: 0 0 1.2em 0;
+  text-indent: 1.8em;
+}
+
+.read-content p:first-child {
+  text-indent: 0;
+}
+
+.read-content p:first-child::first-letter {
+  font-size: 3.5em;
+  float: left;
+  line-height: 0.9;
+  margin: 0.05em 0.08em 0 0;
+  color: var(--theme-600);
+  font-weight: 700;
+}
+
+.read-content h1,
+.read-content h2,
+.read-content h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: var(--theme-700);
+  margin: 1.8em 0 0.8em;
+  line-height: 1.3;
+}
+
+.read-content h1 { font-size: 1.8em; }
+.read-content h2 { font-size: 1.5em; }
+.read-content h3 { font-size: 1.25em; }
+
+.read-content blockquote {
+  border-left: 3px solid var(--theme-400);
+  padding: 8px 0 8px 24px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: var(--gray-700);
+  background: var(--theme-50);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.read-content ul,
+.read-content ol {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+
+.read-content li {
+  margin-bottom: 0.5em;
+}
+
+.read-content strong {
+  color: var(--gray-900);
+  font-weight: 700;
+}
+
+.read-content em {
+  font-style: italic;
+}
+
+.read-content a {
+  color: var(--theme-600);
+  border-bottom: 1px solid var(--theme-300);
+  text-decoration: none;
+}
+
+.read-content a:hover {
+  color: var(--theme-700);
+  border-bottom-color: var(--theme-500);
+}
+
+.read-empty {
+  text-align: center;
+  color: var(--gray-500);
+  font-style: italic;
+  padding: 40px 0;
+}
+
+/* Bölüm sonu süslemesi */
+.read-footer {
+  margin-top: 48px;
+  text-align: center;
+}
+
+.read-footer-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--theme-300), transparent);
+  margin-bottom: 16px;
+}
+
+.read-footer-text {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: var(--theme-400);
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+
+/* Küçük ekranlarda padding düşür */
+@media (max-width: 720px) {
+  .read-article {
+    padding: 36px 28px;
+  }
+  .read-title {
+    font-size: 28px;
+  }
+  .read-content {
+    font-size: 16px;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   KİTAP ÖNİZLEME (BOOK READ VIEW)
+   ═══════════════════════════════════════════════ */
+.book-read-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 20px 20px 40px;
+}
+
+.book-read-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--theme-100);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.book-read-meta {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  color: var(--gray-500);
+  font-style: italic;
+}
+
+/* Sayfa wrapper — oklar ve sayfa */
+.book-page-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 600px;
+}
+
+.book-page-nav {
+  background: white;
+  border: 1px solid var(--theme-200);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 26px;
+  font-weight: 300;
+  color: var(--theme-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  position: absolute;
+  z-index: 10;
+  box-shadow: var(--shadow);
+}
+
+.book-page-nav:hover:not(.disabled) {
+  background: var(--theme-50);
+  border-color: var(--theme-400);
+  color: var(--theme-700);
+  transform: scale(1.1);
+}
+
+.book-page-nav.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.book-page-nav-left {
+  left: -24px;
+}
+
+.book-page-nav-right {
+  right: -24px;
+}
+
+/* Sayfanın kendisi */
+.book-page {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 64px 72px;
+  border: 1px solid var(--theme-100);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sayfa çevirme animasyonu */
+.page-enter {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.page-exit-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.page-exit-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Kitap kapak sayfası */
+.book-cover {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.book-cover-deco {
+  font-size: 72px;
+  color: var(--theme-300);
+  margin-bottom: 24px;
+}
+
+.book-cover-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--theme-700);
+  line-height: 1.2;
+  margin-bottom: 24px;
+  max-width: 500px;
+}
+
+.book-cover-tags {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  color: var(--theme-500);
+  font-style: italic;
+  letter-spacing: 1px;
+  margin-bottom: 60px;
+}
+
+.book-cover-hint {
+  position: absolute;
+  bottom: 40px;
+  font-size: 12px;
+  color: var(--gray-500);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Bölüm başlık sayfası */
+.book-chapter-title {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.chapter-number-label {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 14px;
+  color: var(--theme-500);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.chapter-title-text {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--theme-700);
+  line-height: 1.2;
+  margin-bottom: 28px;
+  max-width: 500px;
+}
+
+.chapter-info-line {
+  width: 60px;
+  height: 1px;
+  background: var(--theme-400);
+  margin-bottom: 16px;
+}
+
+.chapter-info-text {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  color: var(--gray-500);
+  font-style: italic;
+}
+
+/* İçerik sayfası */
+.book-content-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.book-content-chapter-label {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--theme-500);
+  text-align: center;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--theme-200);
+}
+
+.book-content-body {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.9;
+  color: var(--gray-900);
+  text-align: justify;
+  hyphens: auto;
+  flex: 1;
+}
+
+.book-content-body p {
+  margin: 0 0 1em 0;
+  text-indent: 1.6em;
+}
+
+.book-content-body p:first-child {
+  text-indent: 0;
+}
+
+.book-content-body h1,
+.book-content-body h2,
+.book-content-body h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: var(--theme-700);
+  margin: 1.5em 0 0.6em;
+}
+
+.book-content-body blockquote {
+  border-left: 3px solid var(--theme-400);
+  padding: 6px 0 6px 20px;
+  margin: 1.2em 0;
+  font-style: italic;
+  color: var(--gray-700);
+}
+
+.book-content-body strong { color: var(--gray-900); font-weight: 700; }
+.book-content-body em { font-style: italic; }
+
+/* Sayfa numarası altta */
+.book-read-footer {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.book-page-indicator {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 13px;
+  color: var(--theme-500);
+  font-style: italic;
+  letter-spacing: 2px;
+}
+
+/* Responsive */
+@media (max-width: 720px) {
+  .book-page {
+    padding: 32px 24px;
+    min-height: 500px;
+  }
+  .book-page-nav-left { left: -16px; }
+  .book-page-nav-right { right: -16px; }
+  .book-page-nav {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
+  .book-cover-title { font-size: 32px; }
+  .chapter-title-text { font-size: 28px; }
+}

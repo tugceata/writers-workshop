@@ -10,7 +10,8 @@ CREATE TABLE users (
     username      VARCHAR(50),
     password_hash VARCHAR(255) NOT NULL,
     created_at    TIMESTAMP DEFAULT NOW(),
-    updated_at    TIMESTAMP DEFAULT NOW()
+    updated_at    TIMESTAMP DEFAULT NOW(),
+    theme         VARCHAR(20) DEFAULT 'rose',
 );
 
 CREATE INDEX idx_users_email ON users(email);

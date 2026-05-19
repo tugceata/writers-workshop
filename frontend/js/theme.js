@@ -1,9 +1,9 @@
 /**
  * Tema yönetimi.
- * Kullanıcının seçtiği temayı localStorage'da saklar ve uygular.
+ * Kullanıcı login ise teması user objesinde saklanır.
+ * Login değilse her zaman 'rose' (varsayılan) uygulanır.
  */
 
-const STORAGE_KEY = 'ww_theme';
 const DEFAULT_THEME = 'rose';
 
 export const THEMES = {
@@ -29,19 +29,21 @@ export const THEMES = {
   },
 };
 
-export function getTheme() {
-  return localStorage.getItem(STORAGE_KEY) || DEFAULT_THEME;
-}
-
-export function setTheme(themeId) {
-  if (!THEMES[themeId]) return;
-  localStorage.setItem(STORAGE_KEY, themeId);
-  applyTheme(themeId);
+export function getCurrentTheme() {
+  const userRaw = localStorage.getItem('ww_user');
+  if (!userRaw) return DEFAULT_THEME;
+  try {
+    const user = JSON.parse(userRaw);
+    return user.theme || DEFAULT_THEME;
+  } catch {
+    return DEFAULT_THEME;
+  }
 }
 
 export function applyTheme(themeId) {
+  if (!THEMES[themeId]) themeId = DEFAULT_THEME;
   document.documentElement.setAttribute('data-theme', themeId);
 }
 
-// Sayfa yüklenirken otomatik uygula
-applyTheme(getTheme());
+// İlk yüklemede kullanıcının temasını uygula
+applyTheme(getCurrentTheme());

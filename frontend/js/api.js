@@ -66,6 +66,9 @@ export const chaptersApi = {
   create: (bookId, d)    => request(`/books/${bookId}/chapters`, { method: 'POST', body: d }),
   update: (bookId, id, d)=> request(`/books/${bookId}/chapters/${id}`, { method: 'PUT', body: d }),
   remove: (bookId, id)   => request(`/books/${bookId}/chapters/${id}`, { method: 'DELETE' }),
+  revisions: (bookId, id) => request(`/books/${bookId}/chapters/${id}/revisions`),
+  restoreRevision: (bookId, id, revId) =>
+    request(`/books/${bookId}/chapters/${id}/revisions/${revId}/restore`, { method: 'POST' }),
 };
 
 // ═══════════════════════════════════════════════

@@ -211,3 +211,18 @@ CREATE TRIGGER chapter_changes_update_book
 AFTER INSERT OR UPDATE OR DELETE ON chapters
 FOR EACH ROW
 EXECUTE FUNCTION update_book_timestamp_on_chapter_change();
+
+-- ═══════════════════════════════════════════════
+-- CHAPTER REVISIONS (bölüm değişiklik geçmişi)
+-- ═══════════════════════════════════════════════
+
+CREATE TABLE chapter_revisions (
+    id SERIAL PRIMARY KEY,
+    chapter_id INTEGER NOT NULL REFERENCES chapters(id) ON DELETE CASCADE,
+
+    title VARCHAR(200) NOT NULL,
+    content TEXT NOT NULL,
+    word_count INTEGER NOT NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);

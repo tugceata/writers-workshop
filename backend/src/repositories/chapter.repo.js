@@ -12,7 +12,10 @@ async function findByBookId(bookId) {
 
 async function findById(id) {
   const result = await pool.query(
-    'SELECT * FROM chapters WHERE id = $1',
+    `SELECT chapters.*, books.user_id
+     FROM chapters
+     JOIN books ON chapters.book_id = books.id
+     WHERE chapters.id = $1`,
     [id]
   );
   return result.rows[0] || null;

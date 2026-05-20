@@ -1,5 +1,6 @@
 const express = require('express');
 const chapterService = require('../services/chapter.service');
+const revisionService = require('../services/revision.service');
 
 const router = express.Router({ mergeParams: true });
 
@@ -83,12 +84,25 @@ router.post('/', async (req, res, next) => {
  */
 router.put('/:id', async (req, res, next) => {
   try {
+    // 2. Body'den createRevision'ı ayır, geri kalanları updateData içine al
+    const { createRevision, ...updateData } = req.body;
+
+    // 3. Bölümü Normal Şekilde Güncelle
     const chapter = await chapterService.updateChapter(
       req.params.bookId,
       req.params.id,
       req.user.id,
-      req.body
+      updateData // Tüm body yerine, sadece chapter verilerini gönderiyoruz
     );
+
+    // 4. Eğer manuel kaydetme ise Revizyon oluştur!
+    if (createRevision) {
+      await revisionService.createChapterRevision(
+        req.params.id, // chapter id
+        req.user.id    // user id
+      );
+    }
+
     res.json(chapter);
   } catch (err) {
     next(err);
@@ -112,6 +126,30 @@ router.delete('/:id', async (req, res, next) => {
       req.user.id
     );
     res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Bölümün revizyon geçmişi
+router.get('/:id/revisions', async (req, res, next) => {
+  try {
+    const revisions = await revisionService.getChapterRevisions(req.params.id, req.user.id);
+    res.json(revisions);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Bir sürüme geri dön
+router.post('/:id/revisions/:revisionId/restore', async (req, res, next) => {
+  try {
+    const chapter = await revisionService.restoreRevision(
+      req.params.id,
+      req.params.revisionId,
+      req.user.id
+    );
+    res.json(chapter);
   } catch (err) {
     next(err);
   }

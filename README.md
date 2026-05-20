@@ -44,6 +44,10 @@ Ana sayfada kullanıcıyı kişiselleştirilmiş bir karşılama bekler: Alice i
   - **En çok okunan türler** — sıralı çubuk grafik
 - Tooltip ile hover'da kesin sayı
 
+### Okuma Modları
+- **Bölüm okuma sayfası** — bölümü salt-okunur, kitap tipografisinde (Playfair, drop cap, justify) gösterir; üstte scroll ile dolan ilerleme barı ve kelime sayısına göre okuma süresi tahmini
+- **Kitap önizleme** — tüm kitabı gerçek bir kitap gibi sayfalara böler (sayfa başına ~280 kelime), sol/sağ oklar ve klavye (← →) ile sayfa çevirme, geçiş animasyonu, her bölüm için ayrı başlık sayfası, üstte tüm kitabı kapsayan ilerleme barı
+
 ### Kullanıcı Sistemi
 - E-posta + şifre ile kayıt ve giriş
 - JWT token bazlı kimlik doğrulama
@@ -57,7 +61,7 @@ Ana sayfada kullanıcıyı kişiselleştirilmiş bir karşılama bekler: Alice i
 
 ### Kişiselleştirme
 - **4 tema seçeneği**: Gül (pembe), Erik (mor), Lacivert (mavi), Çam (yeşil)
-- Tema seçimi kullanıcının tarayıcısında `localStorage`'da saklanır
+- Tema seçimi **kullanıcı hesabına bağlıdır** — veritabanında `users.theme` kolonunda saklanır, böylece kullanıcı hangi cihazdan girerse girsin kendi temasını görür. Giriş yapılmamış sayfalar (welcome/login/register) her zaman varsayılan temayı gösterir
 - Tüm sayfa renkleri tema değişkenlerine bağlı — bir tıkla tüm site yeniden boyanır
 - Ana sayfada Lewis Carroll alıntıları (15 farklı Alice quote'u rastgele döner)
 
@@ -74,6 +78,7 @@ Ana sayfada kullanıcıyı kişiselleştirilmiş bir karşılama bekler: Alice i
 - Toast bildirimler (başarı/hata)
 - Tüm formlar Joi şemaları ile doğrulanır, hata mesajları kullanıcı dostudur
 - Türkiye saati ile uyumlu (PostgreSQL container'ı Europe/Istanbul timezone'unda)
+- Kitap ve okuma listelerinde **arama, filtreleme ve sıralama** (başlık/yazar araması, durum/puan filtresi, çeşitli sıralama seçenekleri)
 
 ---
 
@@ -142,12 +147,13 @@ Tam Swagger dokümantasyonu sunucu çalışırken `http://localhost:3000/api-doc
 | PATCH  | `/api/auth/me` | İsim güncelle | ✅ |
 | POST   | `/api/auth/change-password` | Şifre değiştir | ✅ |
 | DELETE | `/api/auth/me` | Hesabı kalıcı sil | ✅ |
+| PATCH  | `/api/auth/theme` | Tema tercihini güncelle | ✅ |
 
 ### Kitaplar
 
 | Method | Endpoint | Açıklama |
 |--------|----------|----------|
-| GET    | `/api/books` | Kullanıcının kitaplarını listele |
+| GET    | `/api/books` | Kitapları listele (sayfalama, filtreleme, sıralama destekler) |
 | GET    | `/api/books/:id` | Tek kitap detayı |
 | POST   | `/api/books` | Yeni kitap oluştur |
 | PUT    | `/api/books/:id` | Kitabı güncelle |
@@ -167,7 +173,7 @@ Tam Swagger dokümantasyonu sunucu çalışırken `http://localhost:3000/api-doc
 
 | Method | Endpoint | Açıklama |
 |--------|----------|----------|
-| GET    | `/api/reading-log` | Okumaları listele |
+| GET    | `/api/reading-log` | Okumaları listele (sayfalama, filtreleme, sıralama destekler) |
 | GET    | `/api/reading-log/stats` | İstatistikler (toplam, ortalama, türler, puan dağılımı) |
 | GET    | `/api/reading-log/:id` | Tek okuma kaydı |
 | POST   | `/api/reading-log` | Yeni okuma kaydı |
@@ -179,6 +185,26 @@ Tam Swagger dokümantasyonu sunucu çalışırken `http://localhost:3000/api-doc
 | Method | Endpoint | Açıklama |
 |--------|----------|----------|
 | GET    | `/api/tags` | Tüm tag'leri listele (22 sabit etiket) |
+
+### Listeleme Parametreleri
+
+`GET /api/books` ve `GET /api/reading-log` şu query parametrelerini kabul eder:
+
+| Parametre | Açıklama |
+|-----------|----------|
+| `page`, `limit` | Sayfalama (varsayılan: page 1, limit 50) |
+| `sort`, `order` | Sıralama alanı ve yönü (asc/desc) |
+| `search` | Başlık/yazar/açıklamada metin araması |
+| `status` | Kitaplar için durum filtresi (draft/completed) |
+| `min_rating` | Okumalar için minimum puan filtresi (1-5) |
+
+Cevap formatı:
+```json
+{
+  "data": [ ... ],
+  "pagination": { "page": 1, "limit": 50, "total": 12, "totalPages": 1 }
+}
+```
 
 ---
 
@@ -225,7 +251,7 @@ books ↔ tags   ← Çok-çok ilişki (book_tags tablosu üzerinden)
 
 | Tablo | Açıklama | Anahtar Alanlar |
 |-------|----------|-----------------|
-| `users` | Kullanıcılar | `id`, `email` (unique), `username` (opsiyonel), `password_hash` |
+| `users` | Kullanıcılar | `id`, `email` (unique), `username` (opsiyonel), `password_hash`, `theme` |
 | `books` | Kitap projeleri | `id`, `user_id` (FK), `title`, `description`, `status` |
 | `chapters` | Bölümler | `id`, `book_id` (FK), `title`, `content` (HTML), `chapter_order`, `word_count` |
 | `reading_log` | Okuma kayıtları | `id`, `user_id` (FK), `title`, `author`, `rating`, `review` |
@@ -238,7 +264,7 @@ books ↔ tags   ← Çok-çok ilişki (book_tags tablosu üzerinden)
 
 ## Test
 
-Backend'de **38+ unit test** vardır. Saf fonksiyonlar test edilmiştir:
+Backend'de **67 unit test** vardır (Jest). Saf fonksiyonlar ve doğrulama şemaları test edilmiştir:
 
 - `countWords(htmlContent)` — HTML temizleyip kelime sayar
 - `calculateAverageRating(entries)` — Ortalama puan
@@ -250,6 +276,8 @@ Backend'de **38+ unit test** vardır. Saf fonksiyonlar test edilmiştir:
 - `generateToken(user)` — JWT üretimi
 - `verifyToken(token)` — JWT doğrulama
 - `calculateBookProgress(book, total, written)` — Yüzde hesaplama
+- `registerSchema / loginSchema / changePasswordSchema` — Joi doğrulama kuralları (email formatı, şifre uzunluğu, zorunlu alanlar)
+- Token üretiminin geçerlilik, süre ve imza doğrulaması
 
 Çalıştırmak için: `cd backend && npm test`
 
@@ -272,7 +300,7 @@ Hash bazlı router kullanılır. `protect()` ve `publicOnly()` wrapper'ları say
 - Public route'lar (örn. `/login`) → zaten girişliyse ana sayfaya yönlendir
 
 ### CSS Tema Sistemi
-Tüm renkler CSS custom property (`--theme-50`'den `--theme-700`'e) olarak tanımlanır. `data-theme="lavender"` gibi bir HTML attribute değiştirildiğinde tüm site renkleri anlık olarak güncellenir.
+Tüm renkler CSS custom property (`--theme-50`'den `--theme-700`'e) olarak tanımlanır. Kullanıcının teması veritabanından okunup `data-theme` attribute'una yazılır; değiştiğinde tüm site renkleri anlık güncellenir.
 
 ---
 

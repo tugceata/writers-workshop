@@ -1,23 +1,53 @@
 const pool = require('../config/db');
 
-async function findAllByUser(userId, { rating, genre } = {}) {
-  let query = 'SELECT * FROM reading_log WHERE user_id = $1';
+async function findAllByUser(userId, options = {}) {
+  const {
+    page = 1,
+    limit = 50,
+    sort = 'created_at',
+    order = 'desc',
+    min_rating,
+    search,
+  } = options;
+
+  const offset = (page - 1) * limit;
   const params = [userId];
+  let whereClause = 'WHERE user_id = $1';
+  let paramIdx = 2;
 
-  if (rating !== undefined) {
-    params.push(rating);
-    query += ` AND rating = $${params.length}`;
+  if (min_rating) {
+    whereClause += ` AND rating >= $${paramIdx++}`;
+    params.push(min_rating);
   }
 
-  if (genre) {
-    params.push(genre);
-    query += ` AND genre = $${params.length}`;
+  if (search) {
+    whereClause += ` AND (title ILIKE $${paramIdx} OR author ILIKE $${paramIdx})`;
+    params.push(`%${search}%`);
+    paramIdx++;
   }
 
-  query += ' ORDER BY created_at DESC';
+  const countResult = await pool.query(
+    `SELECT COUNT(*) FROM reading_log ${whereClause}`,
+    params
+  );
+  const total = parseInt(countResult.rows[0].count, 10);
 
-  const result = await pool.query(query, params);
-  return result.rows;
+  const dataResult = await pool.query(
+    `SELECT * FROM reading_log ${whereClause}
+     ORDER BY ${sort} ${order.toUpperCase()}
+     LIMIT $${paramIdx++} OFFSET $${paramIdx++}`,
+    [...params, limit, offset]
+  );
+
+  return {
+    data: dataResult.rows,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
 }
 
 async function findByIdAndUser(id, userId) {

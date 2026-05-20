@@ -14,20 +14,39 @@ const router = express.Router();
  * @swagger
  * /api/books:
  *   get:
- *     summary: Kullanıcının kitaplarını listele
+ *     summary: Kullanıcının kitaplarını listele (sayfalı, filtreli)
  *     tags: [Books]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema: { type: integer, default: 1 }
+ *       - in: query
+ *         name: limit
+ *         schema: { type: integer, default: 50, maximum: 100 }
+ *       - in: query
+ *         name: sort
+ *         schema: { type: string, enum: [created_at, updated_at, title] }
+ *       - in: query
+ *         name: order
+ *         schema: { type: string, enum: [asc, desc] }
+ *       - in: query
+ *         name: status
+ *         schema: { type: string, enum: [draft, completed] }
+ *       - in: query
+ *         name: search
+ *         schema: { type: string }
  *     responses:
  *       200:
- *         description: Kitap listesi
+ *         description: Kitap listesi ve sayfalama bilgisi
  *       401:
  *         description: Giriş gerekli
  */
 router.get('/', async (req, res, next) => {
   try {
-    const books = await bookService.listBooks(req.user.id);
-    res.json(books);
+    const result = await bookService.listBooks(req.user.id, req.query);
+    res.json(result);
   } catch (err) {
     next(err);
   }
@@ -41,17 +60,6 @@ router.get('/', async (req, res, next) => {
  *     tags: [Books]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Kitap bulundu
- *       404:
- *         description: Kitap bulunamadı
  */
 router.get('/:id', async (req, res, next) => {
   try {

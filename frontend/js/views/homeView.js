@@ -2,11 +2,15 @@ import { booksApi, readingLogApi, chaptersApi } from '../api.js';
 
 export async function renderHome({ app }) {
   // Tüm verileri paralel çek
-  const [books, readings, readingStats] = await Promise.all([
+  const [booksResponse, readingsResponse, readingStats] = await Promise.all([
     booksApi.list(),
     readingLogApi.list(),
     readingLogApi.stats(),
   ]);
+  const books = booksResponse.data || booksResponse;
+  const readings = readingsResponse.data || readingsResponse;
+  const totalReadings = readingStats.totalBooks ?? readingStats.total ?? 0;
+  const avgRating = readingStats.averageRating ?? 0;
 
   const draftCount = books.filter(b => b.status === 'draft').length;
   const completedCount = books.filter(b => b.status === 'completed').length;
@@ -116,9 +120,9 @@ export async function renderHome({ app }) {
 
         <div class="home-stat-card">
           <div class="home-stat-icon">★</div>
-          <div class="home-stat-value">${readingStats.total}</div>
+          <div class="home-stat-value">${totalReadings}</div>
           <div class="home-stat-label">Okuduğum Kitap</div>
-          <div class="home-stat-sub">Ortalama ${readingStats.averageRating} / 5</div>
+          <div class="home-stat-sub">Ortalama ${avgRating} / 5</div>
         </div>
       </div>
 

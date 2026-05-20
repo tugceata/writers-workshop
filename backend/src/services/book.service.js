@@ -3,12 +3,12 @@ const tagService = require('./tag.service');
 const tagRepo = require('../repositories/tag.repo');
 const { bookSchema } = require('../validators/book.validator');
 
-async function listBooks(userId) {
-  const books = await bookRepo.findAllByUser(userId);
-  for (const book of books) {
-    book.tags = await tagRepo.findByBookId(book.id);
-  }
-  return books;
+async function listBooks(userId, query = {}) {
+  const { bookListSchema } = require('../validators/list.validator');
+  const { value, error } = bookListSchema.validate(query);
+  if (error) throw error;
+
+  return await bookRepo.findAllByUser(userId, value);
 }
 
 async function getBookById(id, userId) {

@@ -47,7 +47,10 @@ async function request(path, options = {}) {
 // BOOKS
 // ═══════════════════════════════════════════════
 export const booksApi = {
-  list:   ()       => request('/books'),
+  list:   (filters)=> {
+    const params = new URLSearchParams(filters || {}).toString();
+    return request(`/books${params ? '?' + params : ''}`);
+  },
   get:    (id)     => request(`/books/${id}`),
   create: (data)   => request('/books', { method: 'POST', body: data }),
   update: (id, d)  => request(`/books/${id}`, { method: 'PUT', body: d }),

@@ -1,11 +1,55 @@
 const pool = require('../config/db');
 
-async function findAllByUser(userId) {
-  const result = await pool.query(
-    'SELECT * FROM books WHERE user_id = $1 ORDER BY created_at DESC',
-    [userId]
+async function findAllByUser(userId, options = {}) {
+  const {
+    page = 1,
+    limit = 50,
+    sort = 'updated_at',
+    order = 'desc',
+    status,
+    search,
+  } = options;
+
+  const offset = (page - 1) * limit;
+  const params = [userId];
+  let whereClause = 'WHERE user_id = $1';
+  let paramIdx = 2;
+
+  if (status) {
+    whereClause += ` AND status = $${paramIdx++}`;
+    params.push(status);
+  }
+
+  if (search) {
+    whereClause += ` AND (title ILIKE $${paramIdx} OR description ILIKE $${paramIdx})`;
+    params.push(`%${search}%`);
+    paramIdx++;
+  }
+
+  // Önce toplam sayıyı al
+  const countResult = await pool.query(
+    `SELECT COUNT(*) FROM books ${whereClause}`,
+    params
   );
-  return result.rows;
+  const total = parseInt(countResult.rows[0].count, 10);
+
+  // Sonra sayfalanmış veriyi al
+  const dataResult = await pool.query(
+    `SELECT * FROM books ${whereClause}
+     ORDER BY ${sort} ${order.toUpperCase()}
+     LIMIT $${paramIdx++} OFFSET $${paramIdx++}`,
+    [...params, limit, offset]
+  );
+
+  return {
+    data: dataResult.rows,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
 }
 
 async function findByIdAndUser(id, userId) {

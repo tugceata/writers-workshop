@@ -46,8 +46,12 @@ function calculateReadingDays(entry) {
 // SERVİS FONKSİYONLARI
 // ═══════════════════════════════════════════════
 
-async function listEntries(userId, filters = {}) {
-  return readingLogRepo.findAllByUser(userId, filters);
+async function listEntries(userId, query = {}) {
+  const { readingLogListSchema } = require('../validators/list.validator');
+  const { value, error } = readingLogListSchema.validate(query);
+  if (error) throw error;
+
+  return await readingLogRepo.findAllByUser(userId, value);
 }
 
 async function getEntryById(id, userId) {
@@ -84,7 +88,10 @@ async function deleteEntry(id, userId) {
 }
 
 async function getStats(userId) {
-  const entries = await readingLogRepo.findAllByUser(userId);
+  const result = await readingLogRepo.findAllByUser(userId);
+
+  const entries = result.data;
+
   return {
     total: entries.length,
     averageRating: calculateAverageRating(entries),

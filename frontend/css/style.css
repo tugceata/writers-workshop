@@ -2717,3 +2717,37 @@ main {
   .book-cover-title { font-size: 32px; }
   .chapter-title-text { font-size: 28px; }
 }
+
+.filter-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.filter-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 14px;
+  border: 1px solid var(--theme-200);
+  border-radius: var(--radius);
+  font-size: 14px;
+  background: white;
+  color: var(--gray-900);
+}
+.filter-input:focus {
+  outline: none;
+  border-color: var(--theme-400);
+}
+.filter-select {
+  padding: 10px 14px;
+  border: 1px solid var(--theme-200);
+  border-radius: var(--radius);
+  font-size: 14px;
+  background: white;
+  color: var(--gray-900);
+  cursor: pointer;
+}
+.filter-select:focus {
+  outline: none;
+  border-color: var(--theme-400);
+}
